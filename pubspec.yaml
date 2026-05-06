@@ -1,0 +1,70 @@
+name: sila
+description: "Sila - Give. Wait. Connect."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.11.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State Management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # Routing
+  go_router: ^14.8.1
+
+  # Backend
+  supabase_flutter: ^2.9.0
+
+  # Error Handling
+  fpdart: ^1.1.0
+
+  # Animations
+  lottie: ^3.3.1
+  rive: any
+
+  # Push Notifications
+  firebase_messaging: ^15.2.4
+  firebase_core: ^3.13.0
+
+  # Utils
+  logger: ^2.5.0
+  connectivity_plus: ^6.1.4
+  cached_network_image: ^3.4.1
+  intl: ^0.20.2
+  google_fonts: ^6.2.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  riverpod_generator: ^2.6.3
+  build_runner: ^2.4.15
+  mocktail: ^1.0.4
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/animations/
+    - assets/images/
+    - assets/icons/gift_icons/
+
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/cairo/Cairo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/cairo/Cairo-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/cairo/Cairo-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/cairo/Cairo-Bold.ttf
+          weight: 700

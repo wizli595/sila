@@ -1,0 +1,55 @@
+# Flutter/Dart/Pub
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+/coverage/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+pubspec.lock
+
+# Generated
+lib/core/l10n/app_localizations.dart
+lib/core/l10n/app_localizations_*.dart
+*.g.dart
+*.freezed.dart
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Android
+/android/app/debug
+/android/app/profile
+/android/app/release
+**/android/local.properties
+**/android/.gradle
+**/android/captures/
+
+# iOS
+**/ios/**/DerivedData/
+**/ios/.symlinks/
+**/ios/**/Pods/
+**/ios/**/Flutter/ephemeral/
+
+# Secrets
+.env
+*.env
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+
+# Symbolication / Obfuscation
+app.*.symbols
+app.*.map.json
+
+# OS
+.DS_Store
+Thumbs.db
+*.log
+*.swp
