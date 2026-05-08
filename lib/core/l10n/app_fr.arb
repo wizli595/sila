@@ -22,5 +22,11 @@
   "giveFirst": "Donnez d'abord, et regardez le fil arriver",
   "networkError": "Pas de connexion Internet",
   "unexpectedError": "Une erreur inattendue s'est produite",
-  "retry": "Réessayer"
+  "retry": "Réessayer",
+  "appNameLatin": "sila",
+  "appNameArabic": "صـلـة",
+  "welcomeVerseFr": "« Tout ce que vous donnez,\nIl le remplace. »",
+  "welcomeVerseRefLatin": "SABA'  ·  34:39",
+  "iHaveAccount": "j'ai un compte",
+  "dontHaveAccount": "je n'ai pas de compte"
 }

@@ -1,6 +1,6 @@
 # Sila — TODO
 
-## Phase 1: Foundation (Current)
+## Phase 1: Foundation ✅
 
 - [x] Flutter project setup + folder structure
 - [x] Theme (colors, typography, spacing)
@@ -13,17 +13,20 @@
 - [x] Screen stubs with navigation flow
 - [x] Thread animation placeholder (CustomPainter)
 
-## Phase 2: Auth & Backend
+## Phase 2: Auth & Backend ✅
 
-- [ ] Set up Supabase project (create tables, RLS policies, storage bucket)
-- [ ] Download + bundle Cairo font files
-- [ ] Implement AuthRepository with Supabase (sign up, sign in, sign out)
-- [ ] Auth state management with Riverpod (auth provider, redirect guard)
-- [ ] Profile creation on sign up (profiles table)
-- [ ] Protected routes — redirect to auth if not logged in
-- [ ] Session persistence (stay logged in between launches)
+- [x] Set up Supabase project (tables, RLS policies, storage bucket)
+- [x] Download + bundle Cairo font (variable TTF)
+- [x] Implement AuthRepository with Supabase (sign up, sign in, sign out)
+- [x] Auth state management with Riverpod (AuthNotifier + AuthState)
+- [x] Profile creation on sign up (profiles table)
+- [x] Protected routes — route guard redirects unauthenticated users
+- [x] Session persistence (Supabase auto-refresh)
+- [x] Input validation + sanitization (email, password, name)
+- [x] Thread animation system — 3 modes (ambient, journey, tied)
+- [x] Supabase SQL setup file (supabase/setup.sql)
 
-## Phase 3: Gift Flow
+## Phase 3: Gift Flow ← NEXT
 
 - [ ] Fetch gift types from Supabase (GiftRepository implementation)
 - [ ] Gift type cards with real data (icons, bilingual names)
@@ -46,12 +49,12 @@
 
 - [ ] Design mascot in Lottie (wave, nod, hold thread, step aside)
 - [ ] Design thread in Rive (interactive, state machine)
-- [ ] Thread running subtly across screen edges during navigation
+- [x] Thread running subtly across screen edges (ambient mode)
+- [x] Waiting screen: thread extends with gentle pulse (journey mode)
+- [x] Inbox screen: thread ties animation (tied mode)
 - [ ] Welcome screen: mascot entrance animation
-- [ ] Waiting screen: thread extends with gentle pulse
-- [ ] Inbox screen: thread ties animation when connection loads
 - [ ] Gift cards: soft press/select animation
-- [ ] Page transitions: smooth fade between all 6 screens
+- [x] Page transitions: smooth fade between all 6 screens
 - [ ] Loading states: shimmer placeholders (not spinners)
 
 ## Phase 6: Admin Panel (Flutter Web)

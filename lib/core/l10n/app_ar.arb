@@ -22,5 +22,11 @@
   "giveFirst": "أَعطِ أولاً، وسترى الخيط يصل",
   "networkError": "لا يوجد اتصال بالإنترنت",
   "unexpectedError": "حدث خطأ غير متوقع",
-  "retry": "إعادة المحاولة"
+  "retry": "إعادة المحاولة",
+  "appNameLatin": "sila",
+  "appNameArabic": "صـلـة",
+  "welcomeVerseFr": "« Tout ce que vous donnez,\nIl le remplace. »",
+  "welcomeVerseRefLatin": "SABA'  ·  34:39",
+  "iHaveAccount": "لدي حساب",
+  "dontHaveAccount": "ليس لدي حساب"
 }

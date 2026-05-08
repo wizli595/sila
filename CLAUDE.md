@@ -11,11 +11,11 @@ You create an account, choose a type of gift, and we handle the price, the quant
 ## Architecture
 
 - **Flutter** mobile app with **clean architecture** (domain → data → presentation)
-- **Riverpod** for state management
-- **GoRouter** for navigation (6 screens, fade transitions)
+- **Riverpod** for state management (StateNotifier pattern)
+- **GoRouter** for navigation (6 screens, fade transitions, auth guard)
 - **Supabase** for backend (auth, database, storage, realtime)
 - **FCM** for push notifications (only: "Your gift arrived")
-- **Lottie** for mascot animations, **Rive** for the thread
+- **Lottie** for mascot animations (TODO), **CustomPainter** for the thread
 - **fpdart** `Either` type for error handling — no silent failures
 
 ## Folder Structure
@@ -23,36 +23,60 @@ You create an account, choose a type of gift, and we handle the price, the quant
 ```
 lib/
 ├── main.dart / bootstrap.dart / app.dart
-├── core/          → shared: theme, router, error, logger, l10n, constants
-└── features/      → one folder per feature, each with data/domain/presentation
-    ├── welcome/   → verse + mascot + "Begin"
-    ├── auth/      → sign up / sign in
-    ├── gifts/     → choose gift type
-    ├── payment/   → confirm + pay (card or CashPlus)
-    ├── waiting/   → thread animation, "your gift is on its way"
-    └── inbox/     → photo + thank-you note from recipient
+├── core/
+│   ├── constants/     → app + supabase constants
+│   ├── error/         → typed failures, exceptions, error handler
+│   ├── logger/        → debug logging (logDebug, logInfo, logError)
+│   ├── network/       → connectivity check
+│   ├── router/        → GoRouter with auth guard
+│   ├── theme/         → colors, typography, spacing, full theme
+│   ├── l10n/          → Arabic + French ARB files (generated)
+│   ├── utils/         → validators (email, password, name sanitization)
+│   └── widgets/       → SilaThread (ambient/journey/tied modes)
+└── features/
+    ├── welcome/       → verse + mascot + ambient thread + "Begin"
+    ├── auth/          → sign up/in with validation, Supabase auth
+    │   ├── data/      → UserModel, AuthRepositoryImpl
+    │   ├── domain/    → SilaUser entity, AuthRepository contract
+    │   └── presentation/ → AuthNotifier/AuthState provider, auth screen
+    ├── gifts/         → choose gift type (data from Supabase)
+    ├── payment/       → confirm + pay (card or CashPlus)
+    ├── waiting/       → journey thread animation
+    └── inbox/         → tied thread + photo + thank-you note
 ```
+
+## Supabase
+
+- **Project:** ijsdjrgqiljovygtnbbu
+- **Tables:** profiles, gift_types, gifts, connections
+- **Storage:** thank-you-photos bucket (public read, admin write)
+- **RLS:** users see own data only, `is_admin()` function for admin access
+- **Admin role:** `profiles.role` enum ('user' | 'admin')
+- **SQL setup:** `supabase/setup.sql`
 
 ## Design
 
 - **Palette:** warm cream `#FFF8F0`, watermelon `#E8636A`, mango `#F5B041`, iris `#7C83BC`
-- **Font:** Cairo (Arabic-first, works for French too)
+- **Font:** Cairo (variable TTF, Arabic-first)
 - **Grid:** 4px spacing system
-- **Motif:** a thread (iris-colored) that connects giver to receiver across the app
-- **Mascot:** friendly round character — waves on welcome, nods on confirm, holds thread on waiting, steps aside on inbox
-- **Verse:** "وَمَا أَنفَقْتُم مِّن شَيْءٍ فَهُوَ يُخْلِفُهُ" (Saba' 34:39) — on welcome + inbox screens
+- **Thread:** iris-colored, 3 modes — ambient (welcome), journey (waiting), tied (inbox)
+- **Mascot:** friendly round character (TODO: Lottie animations)
+- **Verse:** "وَمَا أَنفَقْتُم مِّن شَيْءٍ فَهُوَ يُخْلِفُهُ" (Saba' 34:39) — welcome + inbox
+
+## Security
+
+- Input validation before any Supabase call (validators.dart)
+- Email normalized to lowercase, control characters stripped
+- Password min 8, max 128 chars
+- Session auto-refresh with expiry check
+- Route guard: unauthenticated → /auth, authenticated skips welcome
+- RLS on all tables — no client-side trust
+- Admin actions server-side only (is_admin() SQL function)
 
 ## Languages
 
 - Arabic (primary, RTL) + French (LTR)
-- ARB files in `lib/core/l10n/`
-
-## Backend (Supabase)
-
-- **Tables:** profiles, gift_types, gifts, connections
-- **Storage:** thank-you-photos bucket
-- **RLS:** users see only their own data, admin sees everything
-- **Admin role:** managed via `profiles.role` enum ('user' | 'admin')
+- ARB files in `lib/core/l10n/` → auto-generated via `flutter gen-l10n`
 
 ## Payment
 
@@ -76,5 +100,11 @@ flutter pub get          # install dependencies
 flutter gen-l10n         # regenerate translations
 flutter analyze          # check for errors
 flutter run              # run on connected device
+flutter run -d chrome    # run on Chrome
 flutter test             # run tests
 ```
+
+## Git
+
+- Repo: https://github.com/wizli595/sila
+- Branch: master
