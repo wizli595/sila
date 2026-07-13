@@ -1,0 +1,71 @@
+# Codemagic CI — Sila iOS builds
+# Docs: https://docs.codemagic.io/yaml-basic-configuration/building-a-flutter-app/
+
+workflows:
+  # ------------------------------------------------------------------
+  # 1. Unsigned IPA — works with NO Apple Developer account.
+  #    For sideloading / testing (AltStore, Sideloadly) — not App Store.
+  # ------------------------------------------------------------------
+  ios-unsigned:
+    name: iOS unsigned IPA
+    instance_type: mac_mini_m2
+    max_build_duration: 60
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+    scripts:
+      - name: Get dependencies
+        script: flutter pub get
+      - name: Analyze
+        script: flutter analyze
+      - name: Build iOS (no codesign)
+        script: flutter build ios --release --no-codesign
+      - name: Package IPA
+        script: |
+          cd build/ios/iphoneos
+          mkdir -p Payload
+          cp -r Runner.app Payload/
+          zip -qr sila-unsigned.ipa Payload
+    artifacts:
+      - build/ios/iphoneos/sila-unsigned.ipa
+
+  # ------------------------------------------------------------------
+  # 2. Signed IPA → TestFlight — needs an Apple Developer account.
+  #    Setup once in Codemagic UI:
+  #      Teams → Integrations → App Store Connect → add API key,
+  #      name it "sila-asc-key" (or change the name below).
+  #    The app (bundle id com.sila.sila) must exist in App Store Connect.
+  # ------------------------------------------------------------------
+  ios-testflight:
+    name: iOS signed → TestFlight
+    instance_type: mac_mini_m2
+    max_build_duration: 90
+    integrations:
+      app_store_connect: sila-asc-key
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.sila.sila
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $FLUTTER_ROOT/.pub-cache
+    scripts:
+      - name: Get dependencies
+        script: flutter pub get
+      - name: Set up code signing
+        script: xcode-project use-profiles
+      - name: Build signed IPA
+        script: flutter build ipa --release
+    artifacts:
+      - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
