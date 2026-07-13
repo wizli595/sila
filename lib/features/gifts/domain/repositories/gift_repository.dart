@@ -9,6 +9,10 @@ abstract class GiftRepository {
   Future<Either<Failure, Gift>> createGift({
     required int giftTypeId,
     required String paymentMethod,
+    bool isAnonymous = false,
+
+    /// Overrides the gift type's default price (centimes MAD)
+    int? amountCentimes,
   });
 
   Future<Either<Failure, List<Gift>>> getMyGifts();

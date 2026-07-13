@@ -5,6 +5,9 @@ class Gift {
   final int amount; // centimes MAD
   final String paymentMethod; // 'card' | 'cashplus'
   final GiftStatus status;
+
+  /// Giver chose not to have their name shown to anyone
+  final bool isAnonymous;
   final DateTime createdAt;
 
   const Gift({
@@ -14,6 +17,7 @@ class Gift {
     required this.amount,
     required this.paymentMethod,
     required this.status,
+    this.isAnonymous = false,
     required this.createdAt,
   });
 }
