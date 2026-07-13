@@ -49,13 +49,22 @@ dev_dependencies:
   riverpod_generator: ^2.6.3
   build_runner: ^2.4.15
   mocktail: ^1.0.4
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  adaptive_icon_background: "#FFF8F0"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
 
 flutter:
   uses-material-design: true
   generate: true
 
   # Asset directories are added when their first asset lands
-  # (mascot animations, images, custom gift icons are still TODO)
+  # (mascot animations and custom gift icons are still TODO)
   fonts:
     - family: Cairo
       fonts:
