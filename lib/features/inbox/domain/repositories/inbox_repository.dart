@@ -1,8 +1,7 @@
-import 'package:fpdart/fpdart.dart';
-import '../../../../core/error/failures.dart';
 import '../entities/connection.dart';
 
 abstract class InboxRepository {
-  Future<Either<Failure, List<Connection>>> getMyConnections();
-  Stream<Connection> onNewConnection();
+  /// Live list of the user's connections, newest first.
+  /// Initial fetch + realtime updates; RLS scopes rows to the owner.
+  Stream<List<Connection>> watchMyConnections();
 }
