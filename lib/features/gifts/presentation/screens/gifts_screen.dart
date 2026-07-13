@@ -151,31 +151,37 @@ class _GiftsScreenState extends ConsumerState<GiftsScreen> {
                   error: (err, _) => ErrorRetry(
                     onRetry: () => ref.invalidate(giftTypesProvider),
                   ),
-                  data: (types) => ListView.separated(
-                    itemCount: types.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: AppSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final type = types[index];
-                      return StaggeredItem(
-                        index: index,
-                        child: _GiftCard(
-                          name: type.name(isArabic ? 'ar' : 'fr'),
-                          icon: giftIcon(type.icon),
-                          heroTag: 'gift-${type.id}',
-                          onTap: () {
-                            ref.read(selectedGiftTypeProvider.notifier).state =
-                                type;
-                            // Fresh choices for a fresh gift
-                            ref.read(selectedAmountProvider.notifier).state =
-                                null;
-                            ref.read(giveAnonymouslyProvider.notifier).state =
-                                false;
-                            context.pushNamed(RouteNames.confirm);
-                          },
-                        ),
-                      );
-                    },
+                  data: (types) => RefreshIndicator(
+                    color: AppColors.watermelonDeep,
+                    onRefresh: () async => ref.invalidate(giftTypesProvider),
+                    child: ListView.separated(
+                      itemCount: types.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: AppSpacing.sm),
+                      itemBuilder: (context, index) {
+                        final type = types[index];
+                        return StaggeredItem(
+                          index: index,
+                          child: _GiftCard(
+                            name: type.name(isArabic ? 'ar' : 'fr'),
+                            icon: giftIcon(type.icon),
+                            heroTag: 'gift-${type.id}',
+                            onTap: () {
+                              ref
+                                      .read(selectedGiftTypeProvider.notifier)
+                                      .state =
+                                  type;
+                              // Fresh choices for a fresh gift
+                              ref.read(selectedAmountProvider.notifier).state =
+                                  null;
+                              ref.read(giveAnonymouslyProvider.notifier).state =
+                                  false;
+                              context.pushNamed(RouteNames.confirm);
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),
