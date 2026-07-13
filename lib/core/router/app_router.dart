@@ -16,7 +16,6 @@ import 'package:sila/features/auth/presentation/screens/auth_screen.dart';
 import 'package:sila/features/auth/presentation/screens/forgot_password_screen.dart';
 import 'package:sila/features/auth/presentation/screens/reset_password_screen.dart';
 import 'package:sila/features/auth/presentation/screens/check_email_screen.dart';
-import 'package:sila/features/gifts/presentation/providers/gifts_provider.dart';
 import 'package:sila/features/gifts/presentation/screens/gifts_screen.dart';
 import 'package:sila/features/gifts/presentation/screens/my_threads_screen.dart';
 import 'package:sila/features/payment/presentation/screens/confirm_screen.dart';
@@ -101,20 +100,18 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return RoutePaths.howItWorks;
       }
 
-      // Not logged in + trying to access protected route → auth
-      if (!isLoggedIn && !isPublic) return RoutePaths.auth;
+      // Not logged in on a protected route (e.g. right after signing out)
+      // → home as a guest. Screens that need an account push /auth
+      // explicitly at the moment it matters.
+      if (!isLoggedIn && !isPublic) return RoutePaths.gifts;
 
-      // Session resolved — leave splash/language/welcome/auth.
-      // A guest who signed in mid-giving resumes at their selected gift.
+      // Signed in — always land on home
       if (isLoggedIn &&
           (path == RoutePaths.splash ||
               path == RoutePaths.language ||
               path == RoutePaths.welcome ||
               path == RoutePaths.auth)) {
-        final resumingGift =
-            path == RoutePaths.auth &&
-            ref.read(selectedGiftTypeProvider) != null;
-        return resumingGift ? RoutePaths.confirm : RoutePaths.gifts;
+        return RoutePaths.gifts;
       }
       if (!isLoggedIn &&
           (path == RoutePaths.splash || path == RoutePaths.language)) {
