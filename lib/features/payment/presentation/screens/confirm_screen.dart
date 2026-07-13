@@ -32,13 +32,14 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
     if (_coachStarted) return;
     if (ref.read(seenFlagProvider(CoachKeys.confirm))) return;
 
-    _coachStarted = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ShowCaseWidget.of(
-          showcaseContext,
-        ).startShowCase([_amountKey, if (hasImpact) _impactKey, _anonKey]);
-      }
+      if (!mounted || _coachStarted) return;
+      // Only when this screen is the visible route
+      if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+      _coachStarted = true;
+      ShowCaseWidget.of(
+        showcaseContext,
+      ).startShowCase([_amountKey, if (hasImpact) _impactKey, _anonKey]);
     });
   }
 

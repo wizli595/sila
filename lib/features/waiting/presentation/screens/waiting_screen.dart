@@ -36,11 +36,12 @@ class _WaitingScreenState extends ConsumerState<WaitingScreen> {
 
   void _maybeStartCoach(BuildContext showcaseContext) {
     if (_coachStarted || ref.read(seenFlagProvider(CoachKeys.waiting))) return;
-    _coachStarted = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ShowCaseWidget.of(showcaseContext).startShowCase([_homeKey]);
-      }
+      if (!mounted || _coachStarted) return;
+      // Only when this screen is the visible route
+      if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+      _coachStarted = true;
+      ShowCaseWidget.of(showcaseContext).startShowCase([_homeKey]);
     });
   }
 

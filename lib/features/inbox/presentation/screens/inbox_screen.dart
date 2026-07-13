@@ -36,11 +36,12 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
   void _maybeStartCoach(BuildContext showcaseContext, bool hasItems) {
     if (_coachStarted || !hasItems) return;
     if (ref.read(seenFlagProvider(CoachKeys.inbox))) return;
-    _coachStarted = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ShowCaseWidget.of(showcaseContext).startShowCase([_cardKey]);
-      }
+      if (!mounted || _coachStarted) return;
+      // Only when this screen is the visible route
+      if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+      _coachStarted = true;
+      ShowCaseWidget.of(showcaseContext).startShowCase([_cardKey]);
     });
   }
 

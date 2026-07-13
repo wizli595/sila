@@ -37,13 +37,15 @@ class _GiftsScreenState extends ConsumerState<GiftsScreen> {
     final seen = ref.read(seenFlagProvider(CoachKeys.home));
     if (!isLoggedIn || seen) return;
 
-    _coachStarted = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        ShowCaseWidget.of(
-          showcaseContext,
-        ).startShowCase([_inboxKey, _threadsKey, _settingsKey]);
-      }
+      if (!mounted || _coachStarted) return;
+      // Only when this screen is the visible route — never over a
+      // screen pushed on top (e.g. the sign-in screen)
+      if (!(ModalRoute.of(context)?.isCurrent ?? false)) return;
+      _coachStarted = true;
+      ShowCaseWidget.of(
+        showcaseContext,
+      ).startShowCase([_inboxKey, _threadsKey, _settingsKey]);
     });
   }
 
