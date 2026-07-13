@@ -9,7 +9,6 @@
 /coverage/
 **/doc/api/
 **/ios/Flutter/.last_build_id
-pubspec.lock
 
 # Generated
 lib/core/l10n/app_localizations.dart

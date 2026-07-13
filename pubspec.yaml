@@ -54,11 +54,8 @@ flutter:
   uses-material-design: true
   generate: true
 
-  assets:
-    - assets/animations/
-    - assets/images/
-    - assets/icons/gift_icons/
-
+  # Asset directories are added when their first asset lands
+  # (mascot animations, images, custom gift icons are still TODO)
   fonts:
     - family: Cairo
       fonts:
