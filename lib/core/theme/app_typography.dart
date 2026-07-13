@@ -28,12 +28,13 @@ abstract final class AppTypography {
     height: 1.4,
   );
 
+  // Arabic breathes with looser leading (RTL best practice: 1.65+)
   static const bodyLarge = TextStyle(
     fontFamily: _fontFamily,
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: AppColors.charcoal,
-    height: 1.5,
+    height: 1.65,
   );
 
   static const bodyMedium = TextStyle(
@@ -41,7 +42,7 @@ abstract final class AppTypography {
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.charcoal,
-    height: 1.5,
+    height: 1.65,
   );
 
   static const labelLarge = TextStyle(
@@ -52,17 +53,18 @@ abstract final class AppTypography {
     height: 1.4,
   );
 
+  // Quranic verse — Amiri, classical naskh
   static const verse = TextStyle(
-    fontFamily: _fontFamily,
-    fontSize: 20,
-    fontWeight: FontWeight.w500,
+    fontFamily: 'Amiri',
+    fontSize: 24,
+    fontWeight: FontWeight.w400,
     color: AppColors.charcoal,
-    height: 1.8,
+    height: 2.0,
   );
 
   static const verseRef = TextStyle(
-    fontFamily: _fontFamily,
-    fontSize: 13,
+    fontFamily: 'Amiri',
+    fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.softGray,
     height: 1.4,

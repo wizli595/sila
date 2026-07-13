@@ -27,8 +27,6 @@ abstract final class Validators {
 
   /// Sanitize text input — strip control characters, trim whitespace.
   static String sanitize(String input) {
-    return input
-        .replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '')
-        .trim();
+    return input.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), '').trim();
   }
 }

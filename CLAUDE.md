@@ -56,8 +56,8 @@ lib/
 
 ## Design
 
-- **Palette:** warm cream `#FFF8F0`, watermelon `#E8636A`, mango `#F5B041`, iris `#7C83BC`
-- **Font:** Cairo (variable TTF, Arabic-first)
+- **Palette:** warm cream `#FFF8F0`, watermelon `#E8636A`, mango `#F5B041`, iris `#7C83BC` (decorative) + deep AA variants for text/buttons (`watermelonDeep #C7414A`, `irisDeep #5A628F`, ink `#33302B`, taupe `#75695C`) — full table in `DESIGN.md`
+- **Fonts:** Cairo (UI, variable TTF, Arabic-first) + Amiri (Quranic verse, naskh)
 - **Grid:** 4px spacing system
 - **Thread:** iris-colored, 3 modes — ambient (welcome), journey (waiting), tied (inbox)
 - **Mascot:** friendly round character (TODO: Lottie animations)
@@ -83,6 +83,13 @@ lib/
 - Card (Stripe or CMI gateway)
 - CashPlus (generate payment code, user pays at any point)
 - Currency: MAD (Moroccan Dirham), stored in centimes
+
+## Rules
+
+- **Git:** NEVER add `Co-Authored-By`, `Claude-Session`, or any AI attribution to commits or PRs. Plain conventional commits only (`feat:`, `fix:`, `refactor:`, `docs:`, `chore:`).
+- **Clean code:** no dead code, no duplicated constants/maps, small focused files, no enterprise boilerplate or speculative abstraction. Delete unused providers/deps instead of keeping them "just in case".
+- **Best practices:** `const` constructors wherever possible; every repository method returns `Either<Failure, T>`; dispose all controllers; validate/sanitize input before any Supabase call; never trust the client — RLS is the security boundary.
+- **Design:** text contrast ≥ 4.5:1 (AA) — functional colors live in `AppColors` deep variants, decorative colors (thread, tints) may be softer; touch targets ≥ 44px; animations 150–400ms, respect `MediaQuery.disableAnimations`. See `DESIGN.md`.
 
 ## Key Principles
 

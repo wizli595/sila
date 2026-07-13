@@ -27,18 +27,20 @@ dependencies:
 
   # Animations
   lottie: ^3.3.1
-  rive: any
+  showcaseview: ^4.0.1
 
   # Push Notifications
   firebase_messaging: ^15.2.4
   firebase_core: ^3.13.0
 
   # Utils
-  logger: ^2.5.0
+  shared_preferences: ^2.3.4
   connectivity_plus: ^6.1.4
+  permission_handler: ^11.3.1
+  url_launcher: ^6.3.1
   cached_network_image: ^3.4.1
   intl: ^0.20.2
-  google_fonts: ^6.2.1
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -61,3 +63,8 @@ flutter:
     - family: Cairo
       fonts:
         - asset: assets/fonts/cairo/Cairo-Variable.ttf
+    - family: Amiri
+      fonts:
+        - asset: assets/fonts/amiri/Amiri-Regular.ttf
+        - asset: assets/fonts/amiri/Amiri-Bold.ttf
+          weight: 700

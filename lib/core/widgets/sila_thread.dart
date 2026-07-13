@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import 'package:sila/core/theme/app_colors.dart';
 
 /// The Sila thread — a living wavy line with a small loop.
 ///
@@ -14,13 +14,13 @@ class SilaThread extends StatefulWidget {
   final Color? color;
 
   const SilaThread.ambient({super.key, this.thickness = 1.5, this.color})
-      : mode = ThreadMode.ambient;
+    : mode = ThreadMode.ambient;
 
   const SilaThread.journey({super.key, this.thickness = 2.0, this.color})
-      : mode = ThreadMode.journey;
+    : mode = ThreadMode.journey;
 
   const SilaThread.tied({super.key, this.thickness = 2.0, this.color})
-      : mode = ThreadMode.tied;
+    : mode = ThreadMode.tied;
 
   @override
   State<SilaThread> createState() => _SilaThreadState();
@@ -28,11 +28,9 @@ class SilaThread extends StatefulWidget {
 
 enum ThreadMode { ambient, journey, tied }
 
-class _SilaThreadState extends State<SilaThread>
-    with TickerProviderStateMixin {
+class _SilaThreadState extends State<SilaThread> with TickerProviderStateMixin {
   late final AnimationController _drawController;
   late final AnimationController _breathController;
-  late final AnimationController _driftController;
 
   @override
   void initState() {
@@ -50,20 +48,21 @@ class _SilaThreadState extends State<SilaThread>
     _breathController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 3000),
-    )..repeat(reverse: true);
+    );
+  }
 
-    _driftController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 6),
-    )..repeat(reverse: true);
-
-    switch (widget.mode) {
-      case ThreadMode.ambient:
-        _drawController.forward();
-      case ThreadMode.journey:
-        _drawController.forward();
-      case ThreadMode.tied:
-        _drawController.forward();
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Reduced motion: show the thread fully drawn, no breathing loop
+    if (MediaQuery.of(context).disableAnimations) {
+      _drawController.value = 1.0;
+      _breathController.stop();
+    } else {
+      _drawController.forward();
+      if (!_breathController.isAnimating) {
+        _breathController.repeat(reverse: true);
+      }
     }
   }
 
@@ -71,14 +70,15 @@ class _SilaThreadState extends State<SilaThread>
   void dispose() {
     _drawController.dispose();
     _breathController.dispose();
-    _driftController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final isRtl = Directionality.of(context) == TextDirection.rtl;
+
     return AnimatedBuilder(
-      animation: Listenable.merge([_drawController, _breathController, _driftController]),
+      animation: Listenable.merge([_drawController, _breathController]),
       builder: (context, _) {
         return CustomPaint(
           size: Size.infinite,
@@ -86,9 +86,9 @@ class _SilaThreadState extends State<SilaThread>
             mode: widget.mode,
             draw: _drawController.value,
             breath: _breathController.value,
-            drift: _driftController.value,
             thickness: widget.thickness,
             color: widget.color ?? AppColors.watermelon,
+            mirror: isRtl,
           ),
         );
       },
@@ -100,21 +100,26 @@ class _ThreadPainter extends CustomPainter {
   final ThreadMode mode;
   final double draw;
   final double breath;
-  final double drift;
   final double thickness;
   final Color color;
+  final bool mirror;
 
   _ThreadPainter({
     required this.mode,
     required this.draw,
     required this.breath,
-    required this.drift,
     required this.thickness,
     required this.color,
+    required this.mirror,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
+    // RTL: flip horizontally so the thread flows right-to-left
+    if (mirror) {
+      canvas.translate(size.width, 0);
+      canvas.scale(-1, 1);
+    }
     switch (mode) {
       case ThreadMode.ambient:
         _paintAmbient(canvas, size);
@@ -144,32 +149,47 @@ class _ThreadPainter extends CustomPainter {
       ..moveTo(w * 0.05, cy + wave * 0.5)
       // First wave up
       ..cubicTo(
-        w * 0.15, cy - 25 + wave,
-        w * 0.25, cy + 20 - wave,
-        w * 0.38, cy - 10 + wave,
+        w * 0.15,
+        cy - 25 + wave,
+        w * 0.25,
+        cy + 20 - wave,
+        w * 0.38,
+        cy - 10 + wave,
       )
       // The loop — key visual from the mockup
       ..cubicTo(
-        w * 0.44, cy - 35 + wave,
-        w * 0.54, cy - 40 - wave * 0.5,
-        w * 0.54, cy - 15 + wave * 0.5,
+        w * 0.44,
+        cy - 35 + wave,
+        w * 0.54,
+        cy - 40 - wave * 0.5,
+        w * 0.54,
+        cy - 15 + wave * 0.5,
       )
       ..cubicTo(
-        w * 0.54, cy + 5 - wave * 0.3,
-        w * 0.48, cy + 5 + wave * 0.3,
-        w * 0.56, cy - 5 - wave * 0.5,
+        w * 0.54,
+        cy + 5 - wave * 0.3,
+        w * 0.48,
+        cy + 5 + wave * 0.3,
+        w * 0.56,
+        cy - 5 - wave * 0.5,
       )
       // Continue flowing right
       ..cubicTo(
-        w * 0.65, cy - 20 + wave,
-        w * 0.75, cy + 15 - wave,
-        w * 0.85, cy - 8 + wave * 0.5,
+        w * 0.65,
+        cy - 20 + wave,
+        w * 0.75,
+        cy + 15 - wave,
+        w * 0.85,
+        cy - 8 + wave * 0.5,
       )
       // Trail off
       ..cubicTo(
-        w * 0.90, cy - 12 - wave * 0.3,
-        w * 0.95, cy + 5 + wave * 0.3,
-        w, cy - 3,
+        w * 0.90,
+        cy - 12 - wave * 0.3,
+        w * 0.95,
+        cy + 5 + wave * 0.3,
+        w,
+        cy - 3,
       );
 
     // Draw the thread progressively
@@ -204,14 +224,20 @@ class _ThreadPainter extends CustomPainter {
     final path = Path()
       ..moveTo(cx, h * 0.2)
       ..cubicTo(
-        cx - 30 + wave, h * 0.35,
-        cx + 35 - wave, h * 0.5,
-        cx - 15 + wave * 0.5, h * 0.65,
+        cx - 30 + wave,
+        h * 0.35,
+        cx + 35 - wave,
+        h * 0.5,
+        cx - 15 + wave * 0.5,
+        h * 0.65,
       )
       ..cubicTo(
-        cx - 25 - wave * 0.5, h * 0.72,
-        cx + 20 + wave, h * 0.78,
-        cx, h * 0.85,
+        cx - 25 - wave * 0.5,
+        h * 0.72,
+        cx + 20 + wave,
+        h * 0.78,
+        cx,
+        h * 0.85,
       );
 
     final metric = path.computeMetrics().first;
@@ -264,11 +290,7 @@ class _ThreadPainter extends CustomPainter {
     final bowOffset = 30.0 + wave;
     final path = Path()
       ..moveTo(cx, h * 0.2)
-      ..cubicTo(
-        cx - bowOffset, h * 0.4,
-        cx + bowOffset, h * 0.6,
-        cx, h * 0.8,
-      );
+      ..cubicTo(cx - bowOffset, h * 0.4, cx + bowOffset, h * 0.6, cx, h * 0.8);
 
     final metric = path.computeMetrics().first;
     final drawnPath = metric.extractPath(0, metric.length * draw);
@@ -294,5 +316,5 @@ class _ThreadPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_ThreadPainter old) =>
-      old.draw != draw || old.breath != breath || old.drift != drift;
+      old.draw != draw || old.breath != breath || old.mirror != mirror;
 }
