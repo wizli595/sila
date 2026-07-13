@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sila/core/l10n/app_localizations.dart';
 
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -31,11 +33,12 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
-    // Deleting the account navigates away via the router
-    // (state becomes unauthenticated), so no manual navigation needed.
-    await ref
+    final deleted = await ref
         .read(authProvider.notifier)
         .deleteAccount(_passwordController.text);
+
+    // This screen is pushed on top of settings/home — leave explicitly
+    if (deleted && mounted) context.goNamed(RouteNames.gifts);
   }
 
   @override

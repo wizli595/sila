@@ -72,6 +72,12 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
       if (next.needsEmailConfirm && !(prev?.needsEmailConfirm ?? false)) {
         context.goNamed(RouteNames.checkEmail);
       }
+      // This screen is often pushed on top of home, where the router's
+      // redirect can't see it — navigate home explicitly on success.
+      if (next.status == AuthStatus.authenticated &&
+          prev?.status != AuthStatus.authenticated) {
+        context.goNamed(RouteNames.gifts);
+      }
     });
 
     return Scaffold(

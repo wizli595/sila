@@ -261,6 +261,8 @@ class SettingsScreen extends ConsumerWidget {
 
     if (confirmed == true) {
       await ref.read(authProvider.notifier).signOut();
+      // Settings is pushed on top of home — leave it explicitly
+      if (context.mounted) context.goNamed(RouteNames.gifts);
     }
   }
 }
