@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sila/core/l10n/app_localizations.dart';
 
-import '../../../../core/constants/gift_icons.dart';
 import '../../../../core/providers/app_prefs.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -12,6 +11,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/router/route_names.dart';
 import '../../../../core/widgets/coach_mark.dart';
 import '../../../../core/widgets/error_retry.dart';
+import '../../../../core/widgets/gift_badge.dart';
 import '../../../../core/widgets/press_scale.dart';
 import '../../../../core/widgets/staggered_item.dart';
 import '../../../../core/widgets/thread_loading.dart';
@@ -64,109 +64,109 @@ class _GiftsScreenState extends ConsumerState<GiftsScreen> {
   Widget _buildScreen(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final giftTypes = ref.watch(giftTypesProvider);
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final locale = Localizations.localeOf(context).languageCode == 'ar'
+        ? 'ar'
+        : 'fr';
     final isLoggedIn = ref.watch(isAuthenticatedProvider);
 
     return Scaffold(
       body: SafeArea(
-        child: Padding(
-          padding: AppSpacing.paddingLg,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Quiet navigation — settings on one side, inbox + history on
-              // the other. Guests get a single sign-in link instead.
-              if (isLoggedIn)
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    coachMark(
-                      key: _settingsKey,
-                      description: l10n.coachSettings,
-                      child: IconButton(
-                        tooltip: l10n.settings,
-                        icon: const Icon(
-                          Icons.settings_outlined,
-                          color: AppColors.softGray,
-                        ),
-                        onPressed: () => context.pushNamed(RouteNames.settings),
-                      ),
-                    ),
-                    Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Quiet navigation — settings on one side, inbox + history on
+            // the other. Guests get a single sign-in link instead.
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
+                0,
+              ),
+              child: isLoggedIn
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         coachMark(
-                          key: _threadsKey,
-                          description: l10n.coachThreads,
-                          child: IconButton(
-                            tooltip: l10n.myThreads,
-                            icon: const Icon(
-                              Icons.history_rounded,
-                              color: AppColors.softGray,
-                            ),
-                            onPressed: () =>
-                                context.pushNamed(RouteNames.myThreads),
+                          key: _settingsKey,
+                          description: l10n.coachSettings,
+                          child: _NavButton(
+                            tooltip: l10n.settings,
+                            icon: Icons.settings_outlined,
+                            onTap: () =>
+                                context.pushNamed(RouteNames.settings),
                           ),
                         ),
-                        coachMark(
-                          key: _inboxKey,
-                          description: l10n.coachInbox,
-                          child: IconButton(
-                            tooltip: l10n.inbox,
-                            icon: const Icon(
-                              Icons.mail_outline_rounded,
-                              color: AppColors.softGray,
+                        Row(
+                          children: [
+                            coachMark(
+                              key: _threadsKey,
+                              description: l10n.coachThreads,
+                              child: _NavButton(
+                                tooltip: l10n.myThreads,
+                                icon: Icons.history_rounded,
+                                onTap: () =>
+                                    context.pushNamed(RouteNames.myThreads),
+                              ),
                             ),
-                            onPressed: () =>
-                                context.pushNamed(RouteNames.inbox),
-                          ),
+                            const SizedBox(width: AppSpacing.sm),
+                            coachMark(
+                              key: _inboxKey,
+                              description: l10n.coachInbox,
+                              child: _NavButton(
+                                tooltip: l10n.inbox,
+                                icon: Icons.mail_outline_rounded,
+                                onTap: () =>
+                                    context.pushNamed(RouteNames.inbox),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
-                    ),
-                  ],
-                )
-              else
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: TextButton(
-                    onPressed: () => context.pushNamed(RouteNames.auth),
-                    child: Text(
-                      l10n.signIn,
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.irisDeep,
+                    )
+                  : Align(
+                      alignment: AlignmentDirectional.centerEnd,
+                      child: TextButton(
+                        onPressed: () => context.pushNamed(RouteNames.auth),
+                        child: Text(
+                          l10n.signIn,
+                          style: AppTypography.bodyMedium.copyWith(
+                            color: AppColors.irisDeep,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+            ),
+
+            Expanded(
+              child: giftTypes.when(
+                loading: () => const ThreadLoading(),
+                error: (err, _) => ErrorRetry(
+                  onRetry: () => ref.invalidate(giftTypesProvider),
                 ),
-              const SizedBox(height: AppSpacing.md),
-
-              Text(
-                l10n.chooseGift,
-                style: AppTypography.headlineLarge,
-                textAlign: TextAlign.center,
-              ),
-
-              const SizedBox(height: AppSpacing.xl),
-
-              Expanded(
-                child: giftTypes.when(
-                  loading: () => const ThreadLoading(),
-                  error: (err, _) => ErrorRetry(
-                    onRetry: () => ref.invalidate(giftTypesProvider),
-                  ),
-                  data: (types) => RefreshIndicator(
-                    color: AppColors.watermelonDeep,
-                    onRefresh: () async => ref.invalidate(giftTypesProvider),
-                    child: ListView.separated(
-                      itemCount: types.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: AppSpacing.sm),
-                      itemBuilder: (context, index) {
-                        final type = types[index];
-                        return StaggeredItem(
+                data: (types) => RefreshIndicator(
+                  color: AppColors.watermelonDeep,
+                  onRefresh: () async => ref.invalidate(giftTypesProvider),
+                  child: ListView(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg,
+                      AppSpacing.sm,
+                      AppSpacing.lg,
+                      AppSpacing.md,
+                    ),
+                    children: [
+                      _Header(
+                        title: l10n.chooseGift,
+                        subtitle: l10n.homeSubtitle,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      for (final (index, type) in types.indexed) ...[
+                        StaggeredItem(
                           index: index,
                           child: _GiftCard(
-                            name: type.name(isArabic ? 'ar' : 'fr'),
-                            icon: giftIcon(type.icon),
+                            name: type.name(locale),
+                            impact: type.impact(locale),
+                            iconName: type.icon,
                             heroTag: 'gift-${type.id}',
                             onTap: () {
                               ref
@@ -181,13 +181,54 @@ class _GiftsScreenState extends ConsumerState<GiftsScreen> {
                               context.pushNamed(RouteNames.confirm);
                             },
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                      ],
+                      const SizedBox(height: AppSpacing.md),
+                      StaggeredItem(
+                        index: types.length,
+                        child: _HadithCard(
+                          quote: l10n.homeHadith,
+                          reference: l10n.homeHadithRef,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Floating white icon button — quiet nav that matches the card language.
+class _NavButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
+
+  const _NavButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: EdgeInsets.zero,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: SizedBox(
+          width: 48,
+          height: 48,
+          child: Tooltip(
+            message: tooltip,
+            child: Icon(icon, color: AppColors.softGray),
           ),
         ),
       ),
@@ -195,21 +236,74 @@ class _GiftsScreenState extends ConsumerState<GiftsScreen> {
   }
 }
 
+/// Headline + subtitle beside the giving illustration.
+class _Header extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const _Header({required this.title, required this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: AppTypography.headlineLarge),
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                subtitle,
+                style: AppTypography.bodyMedium.copyWith(
+                  color: AppColors.softGray,
+                  fontSize: 13,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              // Coral accent stroke under the words
+              Container(
+                width: 56,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.watermelon,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Image.asset(
+          'assets/images/home_hero.png',
+          width: 130,
+          excludeFromSemantics: true,
+        ),
+      ],
+    );
+  }
+}
+
 class _GiftCard extends StatelessWidget {
   final String name;
-  final IconData icon;
+  final String? impact;
+  final String iconName;
   final String heroTag;
   final VoidCallback onTap;
 
   const _GiftCard({
     required this.name,
-    required this.icon,
+    required this.impact,
+    required this.iconName,
     required this.heroTag,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final impact = this.impact;
+
     return PressScale(
       child: Card(
         child: InkWell(
@@ -218,26 +312,36 @@ class _GiftCard extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,
-              vertical: AppSpacing.md,
+              vertical: 12,
             ),
             child: Row(
               children: [
-                // Hero — the icon flies to the confirm screen
+                // Hero — the badge flies to the confirm screen
                 Hero(
                   tag: heroTag,
-                  child: Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: AppColors.mango.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(icon, color: AppColors.mango),
-                  ),
+                  child: GiftBadge(iconName: iconName),
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Text(name, style: AppTypography.titleLarge),
-                const Spacer(),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name, style: AppTypography.titleLarge),
+                      if (impact != null && impact.isNotEmpty)
+                        Text(
+                          impact,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.bodyMedium.copyWith(
+                            color: AppColors.softGray,
+                            fontSize: 13,
+                            height: 1.4,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
                 const Icon(
                   Icons.arrow_forward_ios_rounded,
                   size: 16,
@@ -247,6 +351,72 @@ class _GiftCard extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Hadith on generosity — closes the list the way the verse opens the app.
+class _HadithCard extends StatelessWidget {
+  final String quote;
+  final String reference;
+
+  const _HadithCard({required this.quote, required this.reference});
+
+  @override
+  Widget build(BuildContext context) {
+    // Naskh needs generous leading; Latin reads tighter
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+
+    return Container(
+      padding: AppSpacing.paddingMd,
+      decoration: BoxDecoration(
+        color: AppColors.mango.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Stack(
+        children: [
+          PositionedDirectional(
+            bottom: 0,
+            end: 0,
+            child: Icon(
+              Icons.favorite_outline_rounded,
+              size: 28,
+              color: AppColors.watermelon.withValues(alpha: 0.3),
+            ),
+          ),
+          Row(
+            children: [
+              Image.asset(
+                'assets/images/quote_sprout.png',
+                width: 56,
+                excludeFromSemantics: true,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '« $quote »',
+                      style: AppTypography.verse.copyWith(
+                        fontSize: isArabic ? 18 : 15,
+                        height: isArabic ? 1.9 : 1.5,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    Text(
+                      reference,
+                      style: AppTypography.verseRef.copyWith(
+                        color: AppColors.watermelonDeep,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

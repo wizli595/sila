@@ -64,7 +64,11 @@ flutter:
   generate: true
 
   # Asset directories are added when their first asset lands
-  # (mascot animations and custom gift icons are still TODO)
+  # (mascot animations are still TODO)
+  assets:
+    - assets/images/
+    - assets/images/gifts/
+
   fonts:
     - family: Cairo
       fonts:

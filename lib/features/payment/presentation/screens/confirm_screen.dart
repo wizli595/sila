@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:showcaseview/showcaseview.dart';
 import 'package:sila/core/l10n/app_localizations.dart';
 
-import '../../../../core/constants/gift_icons.dart';
+import '../../../../core/widgets/gift_badge.dart';
 import '../../../../core/providers/app_prefs.dart';
 import '../../../../core/widgets/coach_mark.dart';
 import '../../../../core/widgets/sila_thread.dart';
@@ -118,7 +118,6 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
       );
     }
 
-    final icon = giftIcon(giftType.icon);
     final impact = giftType.impact(isArabic ? 'ar' : 'fr');
     final amount = chosenAmount ?? giftType.defaultPrice;
 
@@ -150,15 +149,7 @@ class _ConfirmScreenState extends ConsumerState<ConfirmScreen> {
                   Center(
                     child: Hero(
                       tag: 'gift-${giftType.id}',
-                      child: Container(
-                        width: 80,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: AppColors.mango.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Icon(icon, color: AppColors.mango, size: 36),
-                      ),
+                      child: GiftBadge(iconName: giftType.icon, size: 80),
                     ),
                   ),
 
