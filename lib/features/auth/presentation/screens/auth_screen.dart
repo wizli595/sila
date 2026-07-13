@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:sila/core/l10n/app_localizations.dart';
 
+import '../../../../core/router/route_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
@@ -56,7 +58,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
     final l10n = AppLocalizations.of(context)!;
     final auth = ref.watch(authProvider);
 
-    // Show error snackbar
+    // Show error snackbar / handle pending email confirmation
     ref.listen<AuthState>(authProvider, (prev, next) {
       if (next.error != null && prev?.error != next.error) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -66,6 +68,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
           ),
         );
         ref.read(authProvider.notifier).clearError();
+      }
+      if (next.needsEmailConfirm && !(prev?.needsEmailConfirm ?? false)) {
+        context.goNamed(RouteNames.checkEmail);
       }
     });
 
@@ -171,7 +176,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                             color: AppColors.softGray,
                           ),
                           onPressed: () => setState(
-                              () => _obscurePassword = !_obscurePassword),
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
                       obscureText: _obscurePassword,
@@ -179,6 +185,21 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       onFieldSubmitted: (_) => _submit(),
                       validator: (v) => Validators.password(v),
                     ),
+
+                    if (!_isSignUp)
+                      Align(
+                        alignment: AlignmentDirectional.centerEnd,
+                        child: TextButton(
+                          onPressed: () =>
+                              context.pushNamed(RouteNames.forgotPassword),
+                          child: Text(
+                            l10n.forgotPassword,
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: AppColors.irisDeep,
+                            ),
+                          ),
+                        ),
+                      ),
 
                     const SizedBox(height: AppSpacing.xl),
 
@@ -212,6 +233,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       onPressed: () => setState(() {
                         _isSignUp = !_isSignUp;
                         _formKey.currentState?.reset();
+                        _nameController.clear();
+                        _passwordController.clear();
                       }),
                       child: Text(
                         _isSignUp ? l10n.iHaveAccount : l10n.dontHaveAccount,

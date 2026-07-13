@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sila/core/l10n/app_localizations.dart';
 
+import '../../../../core/constants/verses.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/router/route_names.dart';
+import '../../../../core/widgets/gradient_button.dart';
 import '../../../../core/widgets/sila_thread.dart';
 
-class WelcomeScreen extends StatefulWidget {
+class WelcomeScreen extends ConsumerStatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
-  State<WelcomeScreen> createState() => _WelcomeScreenState();
+  ConsumerState<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen>
+class _WelcomeScreenState extends ConsumerState<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   late final AnimationController _fadeController;
   late final Animation<double> _fadeIn;
@@ -34,13 +37,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
       curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
     );
 
-    _slideUp = Tween<Offset>(
-      begin: const Offset(0, 0.15),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
-    ));
+    _slideUp = Tween<Offset>(begin: const Offset(0, 0.15), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _fadeController,
+            curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+          ),
+        );
   }
 
   @override
@@ -52,6 +55,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final verse = ref.watch(verseProvider);
 
     return Scaffold(
       body: Stack(
@@ -72,6 +76,25 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     AppColors.cream.withValues(alpha: 0.0),
                   ],
                   stops: const [0.0, 0.5, 1.0],
+                ),
+              ),
+            ),
+          ),
+
+          // Quiet iris counter-glow from below — balances the warm top
+          Positioned(
+            bottom: -120,
+            left: -80,
+            child: Container(
+              width: 340,
+              height: 340,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: RadialGradient(
+                  colors: [
+                    AppColors.iris.withValues(alpha: 0.10),
+                    AppColors.iris.withValues(alpha: 0.0),
+                  ],
                 ),
               ),
             ),
@@ -121,11 +144,12 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                       const SizedBox(height: AppSpacing.xxl),
 
-                      // Arabic verse
+                      // Arabic verse — rotates each visit
                       Text(
-                        l10n.welcomeVerse,
+                        verse.ar,
                         style: AppTypography.verse,
                         textAlign: TextAlign.center,
+                        textDirection: TextDirection.rtl,
                       ),
 
                       const SizedBox(height: AppSpacing.lg),
@@ -144,9 +168,11 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                       const SizedBox(height: AppSpacing.lg),
 
-                      // French translation
+                      // French translation — force LTR so punctuation
+                      // isn't bidi-reordered inside the RTL layout
                       Text(
-                        l10n.welcomeVerseFr,
+                        verse.fr,
+                        textDirection: TextDirection.ltr,
                         style: AppTypography.bodyMedium.copyWith(
                           fontStyle: FontStyle.italic,
                           color: AppColors.softGray,
@@ -157,44 +183,55 @@ class _WelcomeScreenState extends State<WelcomeScreen>
 
                       const SizedBox(height: AppSpacing.md),
 
-                      // SABA' · 34:39
                       Text(
-                        l10n.welcomeVerseRefLatin,
+                        verse.refLatin,
                         style: AppTypography.verseRef.copyWith(
                           letterSpacing: 3,
                           fontSize: 11,
                         ),
+                        textDirection: TextDirection.ltr,
                       ),
 
                       const Spacer(flex: 3),
 
-                      // Begin button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 56,
-                        child: ElevatedButton(
-                          onPressed: () => context.goNamed(RouteNames.auth),
-                          child: Text(
-                            l10n.begin.toLowerCase(),
-                            style: AppTypography.labelLarge.copyWith(
-                              fontSize: 18,
-                              letterSpacing: 1,
-                            ),
-                          ),
-                        ),
+                      // Begin button — the one gradient moment
+                      GradientButton(
+                        onPressed: () => context.goNamed(RouteNames.gifts),
+                        child: Text(l10n.begin.toLowerCase()),
                       ),
 
                       const SizedBox(height: AppSpacing.md),
 
-                      // "i have an account"
-                      TextButton(
-                        onPressed: () => context.goNamed(RouteNames.auth),
-                        child: Text(
-                          l10n.iHaveAccount,
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: AppColors.softGray,
+                      // "i have an account" · "how it works"
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            onPressed: () => context.goNamed(RouteNames.auth),
+                            child: Text(
+                              l10n.iHaveAccount,
+                              style: AppTypography.bodyMedium.copyWith(
+                                color: AppColors.softGray,
+                              ),
+                            ),
                           ),
-                        ),
+                          Text(
+                            '·',
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: AppColors.softGray,
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () =>
+                                context.pushNamed(RouteNames.howItWorks),
+                            child: Text(
+                              l10n.howItWorksLink,
+                              style: AppTypography.bodyMedium.copyWith(
+                                color: AppColors.softGray,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
 
                       const SizedBox(height: AppSpacing.sm),
@@ -213,10 +250,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     return Container(
       width: 6,
       height: 6,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }

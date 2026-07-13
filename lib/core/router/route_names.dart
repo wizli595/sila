@@ -1,17 +1,53 @@
 abstract final class RouteNames {
+  static const splash = 'splash';
+  static const language = 'language';
   static const welcome = 'welcome';
+  static const howItWorks = 'how-it-works';
   static const auth = 'auth';
+  static const forgotPassword = 'forgot-password';
+  static const resetPassword = 'reset-password';
+  static const checkEmail = 'check-email';
   static const gifts = 'gifts';
   static const confirm = 'confirm';
+  static const payCard = 'pay-card';
+  static const payCash = 'pay-cash';
   static const waiting = 'waiting';
   static const inbox = 'inbox';
+  static const connection = 'connection';
+  static const myThreads = 'my-threads';
+  static const notifyPrime = 'notify-prime';
+  static const settings = 'settings';
+  static const about = 'about';
+  static const privacy = 'privacy';
+  static const terms = 'terms';
+  static const changePassword = 'change-password';
+  static const deleteAccount = 'delete-account';
+  static const updateRequired = 'update-required';
 }
 
 abstract final class RoutePaths {
+  static const splash = '/splash';
+  static const language = '/language';
   static const welcome = '/';
+  static const howItWorks = '/how-it-works';
   static const auth = '/auth';
+  static const forgotPassword = '/forgot-password';
+  static const resetPassword = '/reset-password';
+  static const checkEmail = '/check-email';
   static const gifts = '/gifts';
   static const confirm = '/confirm';
+  static const payCard = '/pay/card';
+  static const payCash = '/pay/cash';
   static const waiting = '/waiting';
   static const inbox = '/inbox';
+  static const connection = '/connection';
+  static const myThreads = '/threads';
+  static const notifyPrime = '/notify-prime';
+  static const settings = '/settings';
+  static const about = '/settings/about';
+  static const privacy = '/settings/privacy';
+  static const terms = '/settings/terms';
+  static const changePassword = '/settings/password';
+  static const deleteAccount = '/settings/delete';
+  static const updateRequired = '/update-required';
 }

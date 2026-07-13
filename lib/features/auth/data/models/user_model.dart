@@ -22,10 +22,10 @@ class UserModel extends SilaUser {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'full_name': fullName,
-        'phone': phone,
-        'locale': locale,
-        'role': isAdmin ? 'admin' : 'user',
-      };
+    'id': id,
+    'full_name': fullName,
+    'phone': phone,
+    'locale': locale,
+    'role': isAdmin ? 'admin' : 'user',
+  };
 }
