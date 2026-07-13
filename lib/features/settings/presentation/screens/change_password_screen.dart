@@ -89,6 +89,7 @@ class _ChangePasswordScreenState extends ConsumerState<ChangePasswordScreen> {
                     ),
                   ),
                   obscureText: _obscure,
+                  textDirection: TextDirection.ltr,
                   validator: Validators.password,
                   onFieldSubmitted: (_) => _submit(),
                   autofocus: true,

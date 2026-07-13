@@ -98,6 +98,7 @@ class _ResetPasswordScreenState extends ConsumerState<ResetPasswordScreen> {
                     ),
                   ),
                   obscureText: _obscure,
+                  textDirection: TextDirection.ltr,
                   validator: Validators.password,
                   onFieldSubmitted: (_) => _submit(),
                 ),

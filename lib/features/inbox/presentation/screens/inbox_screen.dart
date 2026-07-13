@@ -66,6 +66,18 @@ class _InboxScreenState extends ConsumerState<InboxScreen> {
             // Tied thread in the background — connection is made
             const Positioned.fill(child: SilaThread.tied()),
 
+            // Back — RTL-aware arrow
+            PositionedDirectional(
+              top: AppSpacing.sm,
+              start: AppSpacing.sm,
+              child: BackButton(
+                color: AppColors.softGray,
+                onPressed: () => context.canPop()
+                    ? context.pop()
+                    : context.goNamed(RouteNames.gifts),
+              ),
+            ),
+
             // Content
             Padding(
               padding: AppSpacing.paddingLg,

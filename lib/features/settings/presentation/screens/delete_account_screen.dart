@@ -101,6 +101,7 @@ class _DeleteAccountScreenState extends ConsumerState<DeleteAccountScreen> {
                     ),
                   ),
                   obscureText: _obscure,
+                  textDirection: TextDirection.ltr,
                   validator: Validators.password,
                 ),
                 const SizedBox(height: AppSpacing.xl),

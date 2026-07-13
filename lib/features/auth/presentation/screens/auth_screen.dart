@@ -160,6 +160,8 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       textInputAction: TextInputAction.next,
                       autocorrect: false,
                       enableSuggestions: false,
+                      // Latin content — keep it LTR inside RTL layouts
+                      textDirection: TextDirection.ltr,
                       validator: (v) => Validators.email(v),
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -182,6 +184,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       ),
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
+                      textDirection: TextDirection.ltr,
                       onFieldSubmitted: (_) => _submit(),
                       validator: (v) => Validators.password(v),
                     ),

@@ -96,6 +96,7 @@ class _PayCardScreenState extends ConsumerState<PayCardScreen> {
                           ),
                         ),
                         keyboardType: TextInputType.number,
+                        textDirection: TextDirection.ltr,
                         validator: (v) =>
                             (v == null || v.replaceAll(' ', '').length < 12)
                             ? 'invalid'
@@ -111,6 +112,7 @@ class _PayCardScreenState extends ConsumerState<PayCardScreen> {
                                 hintText: l10n.cardExpiry,
                               ),
                               keyboardType: TextInputType.datetime,
+                              textDirection: TextDirection.ltr,
                               validator: (v) => (v == null || v.length < 4)
                                   ? 'invalid'
                                   : null,
@@ -125,6 +127,7 @@ class _PayCardScreenState extends ConsumerState<PayCardScreen> {
                               ),
                               keyboardType: TextInputType.number,
                               obscureText: true,
+                              textDirection: TextDirection.ltr,
                               validator: (v) => (v == null || v.length < 3)
                                   ? 'invalid'
                                   : null,
